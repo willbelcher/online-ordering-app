@@ -14,7 +14,7 @@ class MenuItem(models.Model):
 class Order(models.Model):
     user = models.TextField(max_length=35, null=True)
     store = models.IntegerField()
-    status = models.IntegerField(choices=OrderStatuses, default=1)
+    status = models.IntegerField(choices=OrderStatuses.choices, default=OrderStatuses.IN_PROGRESS)
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
