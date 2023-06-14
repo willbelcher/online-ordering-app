@@ -15,7 +15,7 @@
                     </button>
 
                     <div class="accordion-group">
-                        <div class="collapse {% if account_create_error %}{% else %} show {% endif %}" id="Login" data-bs-parent="#AuthGroup">
+                        <div class="collapse {% if account_create_errors %}{% else %} show {% endif %}" id="Login" data-bs-parent="#AuthGroup">
                             <div class="card">
                                 <div class="card-body">
                                     <form class="form-signin" name="LoginForm" action="/login/" method="post">
@@ -27,8 +27,8 @@
                                         {% else %}{% endif %}
 
                                         {% csrf_token %}
-                                        <input id="username" name="username" class="form-control" placeholder="Username" required="" autofocus="" type="text">
-                                        <input id="password" name="password" class="form-control" placeholder="Password" required="" type="password">
+                                        <input id="loginUsername" name="username" class="form-control" placeholder="Username" required="" autofocus="" type="text">
+                                        <input id="loginPassword" name="password" class="form-control" placeholder="Password" required="" type="password">
                                         <div class="checkbox mb-3">
                                         <label>
                                             <input value="remember-me" type="checkbox"> Remember me
@@ -40,10 +40,30 @@
                             </div>
                         </div>
 
-                        <div class="collapse {% if account_create_error %} show {% else %}{% endif %}" id="CreateAccount" data-bs-parent="#AuthGroup">
-                            <div>
-                            Create account form here
-                        </div>
+                        <div class="collapse {% if account_create_errors %} show {% else %}{% endif %}" id="CreateAccount" data-bs-parent="#AuthGroup">
+                            <div class="card">
+                                <div class="card-body">
+                                    <form class="form-signin" name="LoginForm" action="/create-account/" method="post">
+                                        <h1 class="h3 mb-3 font-weight-normal">Create Account</h1>
+                                        {% for error in account_create_errors %}
+                                            <div class="alert alert-danger">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+
+                                        {% csrf_token %}
+                                        <input id="createAccountUsername" name="username" class="form-control" placeholder="Username" required="" autofocus="" type="text">
+                                        <input id="createAccountEmail" name="email" class="form-control" placeholder="Email" required="" type="email">
+                                        <input id="createAccountPassword" name="password" class="form-control" placeholder="Password" required="" type="password">
+                                        <div class="checkbox mb-3">
+                                        <label>
+                                            <input value="remember-me" type="checkbox"> Remember me
+                                        </label>
+                                        </div>
+                                            <button class="btn btn-sm btn-primary btn-block" type="submit">Sign in</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
