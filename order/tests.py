@@ -64,7 +64,7 @@ class UserAuthTests(TestCase):
         self.assertEqual(len(resp.client.session["account_create_errors"]), 1)
         self.assertFalse(new_user.is_authenticated)
 
-    def test_duplicate_username_create_account(self):
+    def test_duplicate_email_create_account(self):
         self.assertFalse(get_user(self.client).is_authenticated)
 
         username = "test2"
