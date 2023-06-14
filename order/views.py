@@ -40,7 +40,7 @@ def user_login(request):
             return redirect('/')
 
     # print("logged in as: {}".format(request.user))
-    return redirect('/')
+    return redirect('/store-selection') 
 
 def user_create(request):
     logout(request)
@@ -70,6 +70,18 @@ def user_create(request):
         if user is not None:
             if user.is_active:
                 login(request, user) 
-                # print("logged in as: {}".format(request.user))       
+                # print("logged in as: {}".format(request.user))
+                return redirect('/store-selection')   
 
     return redirect('/')
+
+def user_logout(request):
+    logout(request)
+
+    return redirect('/')
+
+@login_required
+def store_selection(request):
+    user = request.user
+
+    return render(request, 'order/store_selection.html')
