@@ -77,4 +77,30 @@ class UserAuthTests(TestCase):
         self.assertEqual(len(resp.client.session["account_create_errors"]), 1)
         self.assertFalse(new_user.is_authenticated)
 
+    def test_duplicate_username_by_case_create_account(self):
+            self.assertFalse(get_user(self.client).is_authenticated)
+
+            username = "Test1"
+            email = "test1@example.com"
+            password = "password"
+
+            resp = self.client.post('/create-account/', {'username': username, 'email': email, 'password': password})
+            
+            new_user = get_user(self.client)
+            self.assertEqual(len(resp.client.session["account_create_errors"]), 1)
+            self.assertFalse(new_user.is_authenticated)
+
+    def test_duplicate_email_by_case_create_account(self):
+        self.assertFalse(get_user(self.client).is_authenticated)
+
+        username = "test2"
+        email = "Test1@example.com"
+        password = "password"
+
+        resp = self.client.post('/create-account/', {'username': username, 'email': email, 'password': password})
+        
+        new_user = get_user(self.client)
+        self.assertEqual(len(resp.client.session["account_create_errors"]), 1)
+        self.assertFalse(new_user.is_authenticated)
+
 
