@@ -4,5 +4,6 @@ from . import views
 
 app_name = 'order'
 urlpatterns = [
-    path('', views.index, name='index')
+    path('', views.index, name='index'),
+    path('login/', views.user_login, name='login'),
 ]

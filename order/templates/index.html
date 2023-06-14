@@ -1,15 +1,57 @@
 <!DOCTYPE html>
-{% extends "base.html" %}
-
 {% block content %}
+
+{% include "nav.html" %}
 <div class="container">
-    <ul class="nav bg-info">
-        <li class="nav-item">
-            test
-        </li>
-        <li class="nav-item">
-            something
-        </li>
-    </ul>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body" id="AuthGroup">
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#Login" data-bs-parent="#AuthGroup">
+                        Login
+                    </button>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#CreateAccount" data-bs-parent="#AuthGroup">
+                        Create Account
+                    </button>
+
+                    <div class="accordion-group">
+                        <div class="collapse {% if account_create_error %}{% else %} show {% endif %}" id="Login" data-bs-parent="#AuthGroup">
+                            <div class="card">
+                                <div class="card-body">
+                                    <form class="form-signin" name="LoginForm" action="/login/" method="post">
+                                        <h1 class="h3 mb-3 font-weight-normal">Login</h1>
+                                        {% if login_error %}
+                                            <div class="alert alert-danger">
+                                                {{ login_error }}
+                                            </div>
+                                        {% else %}{% endif %}
+
+                                        {% csrf_token %}
+                                        <input id="username" name="username" class="form-control" placeholder="Username" required="" autofocus="" type="text">
+                                        <input id="password" name="password" class="form-control" placeholder="Password" required="" type="password">
+                                        <div class="checkbox mb-3">
+                                        <label>
+                                            <input value="remember-me" type="checkbox"> Remember me
+                                        </label>
+                                        </div>
+                                            <button class="btn btn-sm btn-primary btn-block" type="submit">Sign in</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="collapse {% if account_create_error %} show {% else %}{% endif %}" id="CreateAccount" data-bs-parent="#AuthGroup">
+                            <div>
+                            Create account form here
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            
+        </div>
+    </div>
 </div>
 {% endblock content %}
