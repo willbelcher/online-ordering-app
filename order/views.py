@@ -3,6 +3,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
+from order.models import Store
+
+import datetime
+from zoneinfo import ZoneInfo
+
 # Contains store selection and account options
 def index(request):
     login_error = account_create_errors = None
@@ -84,4 +89,40 @@ def user_logout(request):
 def store_selection(request):
     user = request.user
 
-    return render(request, 'order/store_selection.html')
+    stores = Store.objects.all()
+    
+    processed_stores = []
+    for store in stores:
+        is_open = True
+
+        if store.out_of_schedule_close:
+            is_open = False
+
+        else:
+            schedule = list(store.schedule.__dict__.values())[2:]
+            timezone = ZoneInfo(store.timezone)
+            
+            localized_datetime = datetime.datetime.now(tz=timezone)
+            current_day = localized_datetime.weekday()
+            localized_time = localized_datetime.time()
+
+            today_open = schedule[current_day*2]
+            today_close = schedule[current_day*2 + 1]
+
+            if today_open is None or today_close is None:
+                is_open = False
+            elif localized_time < today_open or localized_time > today_close:
+                is_open = False
+        
+        processed_store = store.__dict__
+        del processed_store['_state']
+        del processed_store['timezone']
+
+        processed_store['is_open'] = is_open
+
+        print(processed_store)
+        processed_stores.append(
+            processed_store
+        )
+
+    return render(request, 'order/store_selection.html', {"stores": processed_stores})

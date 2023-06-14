@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class OrderStatuses(models.IntegerChoices):
     IN_PROGRESS = 1, "In Progress"
@@ -39,6 +39,7 @@ class Store(models.Model):
     name = models.TextField(max_length=75, unique=True)
     # location = None
     address = models.TextField(max_length=150, unique=True)
+    timezone = models.TextField(default="UTC", max_length=30)
     schedule = models.OneToOneField(BusinessHours, on_delete=models.CASCADE)
     out_of_schedule_close = models.BooleanField(default=False)
     available_items = models.ManyToManyField(MenuItem)
