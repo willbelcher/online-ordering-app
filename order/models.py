@@ -31,14 +31,14 @@ class BusinessHours(models.Model):
     sun_close = models.TimeField(null=True)
 
 class MenuItem(models.Model):
-    name = models.TextField(max_length=15)
+    name = models.TextField(max_length=15, unique=True)
     price = models.DecimalField(default=0, max_digits=5, decimal_places=2)
     available = models.BooleanField(default=True)
 
 class Store(models.Model):
-    name = models.TextField(max_length=75)
+    name = models.TextField(max_length=75, unique=True)
     # location = None
-    address = models.TextField(max_length=150)
+    address = models.TextField(max_length=150, unique=True)
     schedule = models.OneToOneField(BusinessHours, on_delete=models.CASCADE)
     out_of_schedule_close = models.BooleanField(default=False)
     available_items = models.ManyToManyField(MenuItem)
