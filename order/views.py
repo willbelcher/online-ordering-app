@@ -39,7 +39,7 @@ def user_login(request):
             request.session['login_error'] = "Incorrect username/password"
             return redirect('/')
 
-    print("logged in as: {}".format(request.user))
+    # print("logged in as: {}".format(request.user))
     return redirect('/')
 
 def user_create(request):
@@ -65,11 +65,11 @@ def user_create(request):
             return redirect('/')
             
         user = User.objects.create_user(username=username, email=email, password=password)
-        print("created new user: {}".format(user.get_username()))
+        # print("created new user: {}".format(user.get_username()))
 
         if user is not None:
             if user.is_active:
                 login(request, user) 
-                print("logged in as: {}".format(request.user))       
+                # print("logged in as: {}".format(request.user))       
 
     return redirect('/')
