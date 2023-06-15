@@ -4,8 +4,54 @@
 {% include "nav.html" %}
 
 <div class="container">
-    Store Selection here
-
+    <div class="card">
+        <div class="card-body grid">
+            {% for store in stores %}
+            <div class="row justify-content-center">
+                <div class="card min-vw-50 w-50">
+                    <div class="card-body">
+                        <div class="row pb-3">
+                            <div class="col-sm-auto">
+                                <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#storeCollapse{{ store.id }}" aria-expanded="false" aria-controls="storeCollapse{{ store.id }}">
+                                    Temp
+                                </button>
+                            </div>
+                            <h4 class="card-title col-sm">{{ store.name }}</h4>
+                            <div class="col-sm-auto text-end">
+                                {% if store.is_open %}
+                                <button href="#" class="btn btn-outline-primary"> 
+                                    Order
+                                </button>
+                                {% else %}
+                                <button href="#" class="btn btn-outline-danger" disabled aria-disabled="true"> 
+                                    Closed
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card collapse" id="storeCollapse{{ store.id }}">
+                            <div class="grid">
+                                <div class="row">
+                                    <div class="col-5">
+                                        {{ store.address }}
+                                    </div>
+                                    <div class="col-7">
+                                        {% for day, time_interval in store.schedule.items %}
+                                        <div class="row">
+                                            <div class="col-4">{{ day }}</div>
+                                            <div class="col-8">{{ time_interval }}</div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 
 {% endblock %}

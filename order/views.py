@@ -95,11 +95,16 @@ def store_selection(request):
     for store in stores:
         is_open = True
 
+        schedule = store.schedule.__dict__
+        del schedule['_state']
+        del schedule['id']
+        schedule = list(schedule.values())
+
         if store.out_of_schedule_close:
             is_open = False
 
         else:
-            schedule = list(store.schedule.__dict__.values())[2:]
+            
             timezone = ZoneInfo(store.timezone)
             
             localized_datetime = datetime.datetime.now(tz=timezone)
@@ -114,11 +119,23 @@ def store_selection(request):
             elif localized_time < today_open or localized_time > today_close:
                 is_open = False
         
+        # Convert BusinessHours model to usable dict
+        processed_schedule = {}
+        weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        for weekday in weekdays:
+            start_time = schedule.pop(0)
+            end_time = schedule.pop(0)
+            if start_time is None or end_time is None:
+                processed_schedule[weekday] = "Closed"
+            else:
+                processed_schedule[weekday] = f"{start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}"
+
         processed_store = store.__dict__
         del processed_store['_state']
         del processed_store['timezone']
 
         processed_store['is_open'] = is_open
+        processed_store['schedule'] = processed_schedule
 
         print(processed_store)
         processed_stores.append(
