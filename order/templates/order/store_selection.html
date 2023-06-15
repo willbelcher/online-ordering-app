@@ -3,21 +3,21 @@
 
 {% include "nav.html" %}
 
-<div class="container">
-    <div class="card">
+<div class="container d-flex justify-content-center">
+    <div class="card w-50" style="min-width: 500px;">
         <div class="card-body grid">
             {% for store in stores %}
             <div class="row justify-content-center">
-                <div class="card min-vw-50 w-50">
+                <div class="card">
                     <div class="card-body">
                         <div class="row pb-3">
-                            <div class="col-sm-auto">
+                            <div class="col-2">
                                 <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#storeCollapse{{ store.id }}" aria-expanded="false" aria-controls="storeCollapse{{ store.id }}">
                                     Temp
                                 </button>
                             </div>
-                            <h4 class="card-title col-sm">{{ store.name }}</h4>
-                            <div class="col-sm-auto text-end">
+                            <h4 class="card-title col-7">{{ store.name }}</h4>
+                            <div class="col-2 text-end">
                                 {% if store.is_open %}
                                 <button href="#" class="btn btn-outline-primary"> 
                                     Order
