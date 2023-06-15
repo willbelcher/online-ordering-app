@@ -19,7 +19,7 @@
                             <h4 class="card-title col-7">{{ store.name }}</h4>
                             <div class="col-2 text-end">
                                 {% if store.is_open %}
-                                <button href="#" class="btn btn-outline-primary"> 
+                                <button href="{% url 'order:create_order' store.id %}" class="btn btn-outline-primary"> 
                                     Order
                                 </button>
                                 {% else %}

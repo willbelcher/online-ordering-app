@@ -4,9 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 from order.models import Store
-
-import datetime
-from zoneinfo import ZoneInfo
+from order.custom_utils import StoreWrapper
 
 # Contains store selection and account options
 def index(request):
@@ -93,53 +91,24 @@ def store_selection(request):
     
     processed_stores = []
     for store in stores:
-        is_open = True
+        store_wrapper = StoreWrapper(store)
 
-        schedule = store.schedule.__dict__
-        del schedule['_state']
-        del schedule['id']
-        schedule = list(schedule.values())
+        processed_store = store_wrapper.store_to_dict()
+        processed_store['is_open'] = store_wrapper.check_is_open()
+        processed_store['schedule'] = store_wrapper.schedule_to_dict()
 
-        if store.out_of_schedule_close:
-            is_open = False
-
-        else:
-            
-            timezone = ZoneInfo(store.timezone)
-            
-            localized_datetime = datetime.datetime.now(tz=timezone)
-            current_day = localized_datetime.weekday()
-            localized_time = localized_datetime.time()
-
-            today_open = schedule[current_day*2]
-            today_close = schedule[current_day*2 + 1]
-
-            if today_open is None or today_close is None:
-                is_open = False
-            elif localized_time < today_open or localized_time > today_close:
-                is_open = False
-        
-        # Convert BusinessHours model to usable dict
-        processed_schedule = {}
-        weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-        for weekday in weekdays:
-            start_time = schedule.pop(0)
-            end_time = schedule.pop(0)
-            if start_time is None or end_time is None:
-                processed_schedule[weekday] = "Closed"
-            else:
-                processed_schedule[weekday] = f"{start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}"
-
-        processed_store = store.__dict__
-        del processed_store['_state']
-        del processed_store['timezone']
-
-        processed_store['is_open'] = is_open
-        processed_store['schedule'] = processed_schedule
-
-        print(processed_store)
-        processed_stores.append(
-            processed_store
-        )
+        processed_stores.append(processed_store)
 
     return render(request, 'order/store_selection.html', {"stores": processed_stores})
+
+
+@login_required
+def create_order(request, store_id):
+    pass
+
+
+
+
+
+
+
