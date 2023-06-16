@@ -18,8 +18,8 @@ class StoreWrapper:
         processed_schedule = {}
         weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         for i, weekday in enumerate(weekdays):
-            start_time = self.schedule[i]
-            end_time = self.schedule[i+1]
+            start_time = self.schedule[i*2]
+            end_time = self.schedule[i*2 + 1]
             if start_time is None or end_time is None:
                 processed_schedule[weekday] = "Closed"
             else:
