@@ -33,6 +33,8 @@ class StoreWrapper:
         del processed_store['_state']
         del processed_store['timezone']
 
+        processed_store['address'] = str(self.store.address)
+
         return processed_store
     
     def check_is_open(self):
