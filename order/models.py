@@ -8,6 +8,10 @@ class OrderStatuses(models.IntegerChoices):
     ACCEPTED = 3, "Accepted"
     COMPLETED = 4, "Completed"
 
+class OrderMethods(models.TextChoices):
+    PICKUP = "Pickup"
+    DELIVERY = "Delivery"
+
 class BusinessHours(models.Model):
     mon_open = models.TimeField(null=True)
     mon_close = models.TimeField(null=True)
@@ -29,6 +33,9 @@ class BusinessHours(models.Model):
 
     sun_open = models.TimeField(null=True)
     sun_close = models.TimeField(null=True)
+
+class OrderMethod(models.Model):
+    method = models.TextField(choices=OrderMethods.choices, default=OrderMethods.PICKUP)
 
 class Address(models.Model):
     street = models.CharField(max_length=45, blank=False)
@@ -53,6 +60,7 @@ class Store(models.Model):
     schedule = models.OneToOneField(BusinessHours, on_delete=models.CASCADE)
     out_of_schedule_close = models.BooleanField(default=False)
     available_items = models.ManyToManyField(MenuItem)
+    order_methods = models.ManyToManyField(OrderMethod)
 
 class Order(models.Model):
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
