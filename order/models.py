@@ -30,16 +30,26 @@ class BusinessHours(models.Model):
     sun_open = models.TimeField(null=True)
     sun_close = models.TimeField(null=True)
 
+class Address(models.Model):
+    street = models.CharField(max_length=45, blank=False)
+    city = models.CharField(max_length=30, blank=False)
+    state = models.CharField(max_length=2, blank=False)
+    zipcode = models.CharField(max_length=5, blank=False)
+
+    def __str__(self):
+        return f"{self.street}\n{self.city}, {self.state} {self.zipcode}"
+
 class MenuItem(models.Model):
-    name = models.TextField(max_length=15, unique=True)
+    name = models.CharField(max_length=15, unique=True)
     price = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    ingredients = models.TextField(max_length=255, blank=True)
     available = models.BooleanField(default=True)
 
 class Store(models.Model):
-    name = models.TextField(max_length=75, unique=True)
+    name = models.CharField(max_length=75, unique=True)
     # location = None
-    address = models.TextField(max_length=150, unique=True)
-    timezone = models.TextField(default="UTC", max_length=30)
+    address = models.OneToOneField(Address, on_delete=models.CASCADE)
+    timezone = models.CharField(default="UTC", max_length=30)
     schedule = models.OneToOneField(BusinessHours, on_delete=models.CASCADE)
     out_of_schedule_close = models.BooleanField(default=False)
     available_items = models.ManyToManyField(MenuItem)
@@ -48,8 +58,10 @@ class Order(models.Model):
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     store = models.ForeignKey(Store, null=False, on_delete=models.DO_NOTHING) # test change
     status = models.PositiveSmallIntegerField(choices=OrderStatuses.choices, default=OrderStatuses.IN_PROGRESS)
+    date_created = models.DateTimeField(auto_now_add=True, editable=False, blank=True)
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item = models.ForeignKey(MenuItem, on_delete=models.DO_NOTHING) # Test change to cascade
     quantity = models.PositiveSmallIntegerField(default=1, validators=[MaxValueValidator(15, "Maximum quantity reached")])
+    special_instructions = models.TextField(max_length=255, blank=True)

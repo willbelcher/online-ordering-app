@@ -24,7 +24,7 @@ class StoreWrapper:
                 processed_schedule[weekday] = "Closed"
             else:
                 processed_schedule[weekday] = \
-                f" {start_time.strftime('%I:%M %p')} -  {end_time.strftime('%I:%M %p')}".replace(" 0", "")
+                f" {start_time.strftime('%I:%M %p')} - {end_time.strftime('%I:%M %p')}".replace(" 0", " ")
 
         return processed_schedule
     
