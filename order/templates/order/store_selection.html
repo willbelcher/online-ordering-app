@@ -19,11 +19,13 @@
                             <h4 class="card-title col-7">{{ store.name }}</h4>
                             <div class="col-2 text-end">
                                 {% if store.is_open %}
-                                <button href="{% url 'order:create_order' store.id %}" class="btn btn-outline-primary"> 
-                                    Order
-                                </button>
+                                <form name="orderstore{{ store.name }}" action="{% url 'order:edit_order' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="number" name="store" value="{{ store.id }}" readonly hidden>
+                                    <button class="btn btn-primary btn-block" type="submit">Order</button>
+                                </form>
                                 {% else %}
-                                <button href="#" class="btn btn-outline-danger" disabled aria-disabled="true"> 
+                                <button href="#" class="btn btn-outline-danger btn-block" disabled aria-disabled="true" type="button"> 
                                     Closed
                                 </button>
                                 {% endif %}

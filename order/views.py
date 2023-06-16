@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from order.models import Store
+from order.models import Store, Order, OrderMethod, OrderMethods, OrderStatuses
 from order.custom_utils import StoreWrapper
 
 # Contains store selection and account options
@@ -103,8 +103,32 @@ def store_selection(request):
 
 
 @login_required
-def create_order(request, store_id):
-    pass
+def create_order(request):
+    if request.method != "POST": return redirect('store-selection/')
+
+    store_id = request.POST['id']
+    assert type(store_id) == int
+    user = request.user
+    
+    current_orders = Order.objects.filter(user=user, status=OrderStatuses.IN_PROGRESS)
+    current_orders.delete() # TODO: Change for continue order option, render create_order.html
+    
+    store = Store.objects.get(id=store_id)
+    order_method = store.order_methods.get(method=OrderMethods.PICKUP) #temp TODO: user select order method (in create order and store select)
+    
+    new_order = Order.objects.create(user=user, store=store, order_method=order_method)
+
+    print(new_order.__dict__)
+
+    new_order.delete()
+
+    return redirect("edit-order/")
+
+@login_required
+def edit_order(request):
+    user = request.user
+
+    return render(request, "order/edit_order.html")
 
 
 

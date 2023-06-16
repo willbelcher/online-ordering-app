@@ -18,7 +18,7 @@
                         <div class="collapse {% if account_create_errors %}{% else %} show {% endif %}" id="Login" data-bs-parent="#AuthGroup">
                             <div class="card">
                                 <div class="card-body">
-                                    <form class="form-signin" name="LoginForm" action="/login/" method="post">
+                                    <form class="form-signin" name="LoginForm" action="{% url 'order:login' %}" method="post">
                                         <h1 class="h3 mb-3 font-weight-normal">Login</h1>
                                         {% if login_error %}
                                             <div class="alert alert-danger">
@@ -43,7 +43,7 @@
                         <div class="collapse {% if account_create_errors %} show {% else %}{% endif %}" id="CreateAccount" data-bs-parent="#AuthGroup">
                             <div class="card">
                                 <div class="card-body">
-                                    <form class="form-signin" name="LoginForm" action="/create-account/" method="post">
+                                    <form class="form-signin" name="LoginForm" action="{% url 'order:create_account' %}" method="post">
                                         <h1 class="h3 mb-3 font-weight-normal">Create Account</h1>
                                         {% for error in account_create_errors %}
                                             <div class="alert alert-danger">
