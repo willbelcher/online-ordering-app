@@ -35,7 +35,7 @@ class BusinessHours(models.Model):
     sun_close = models.TimeField(null=True)
 
 class OrderMethod(models.Model):
-    method = models.TextField(choices=OrderMethods.choices, default=OrderMethods.PICKUP)
+    method = models.TextField(choices=OrderMethods.choices, default=OrderMethods.PICKUP, unique=True)
 
 class Address(models.Model):
     street = models.CharField(max_length=45, blank=False)
@@ -65,6 +65,7 @@ class Store(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     store = models.ForeignKey(Store, null=False, on_delete=models.DO_NOTHING) # test change
+    order_method = models.ForeignKey(OrderMethod, null=False, on_delete=models.DO_NOTHING) # test change
     status = models.PositiveSmallIntegerField(choices=OrderStatuses.choices, default=OrderStatuses.IN_PROGRESS)
     date_created = models.DateTimeField(auto_now_add=True, editable=False, blank=True)
 
