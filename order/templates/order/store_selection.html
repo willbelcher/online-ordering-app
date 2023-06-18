@@ -12,14 +12,14 @@
                     <div class="card-body">
                         <div class="row pb-3">
                             <div class="col-2">
-                                <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#storeCollapse{{ store.id }}" aria-expanded="false" aria-controls="storeCollapse{{ store.id }}">
+                                <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#store-collapse{{ store.id }}" aria-expanded="false" aria-controls="store-collapse{{ store.id }}">
                                     Temp
                                 </button>
                             </div>
                             <h4 class="card-title col-7">{{ store.name }}</h4>
                             <div class="col-2 text-end">
                                 {% if store.is_open %}
-                                <form name="orderstore{{ store.name }}" action="{% url 'order:edit_order' %}" method="post">
+                                <form name="order-store-{{ store.name }}" action="{% url 'order:edit_order' %}" method="post">
                                     {% csrf_token %}
                                     <input type="number" name="store" value="{{ store.id }}" readonly hidden>
                                     <button class="btn btn-primary btn-block" type="submit">Order</button>
@@ -31,7 +31,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="card collapse" id="storeCollapse{{ store.id }}">
+                        <div class="card collapse" id="store-collapse{{ store.id }}">
                             <div class="grid">
                                 <div class="row">
                                     <div class="col-5 text-center" style="white-space: pre-line;">
