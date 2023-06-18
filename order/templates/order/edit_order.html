@@ -3,8 +3,18 @@
 
 {% include "nav.html" %}
 <div class="container">
+    <div id="menu-nav-list" class="list-group">
+        {% for category in categories %}
+        <a class="list-group-item list-group-item-action" href="#{{category}}-grid">Item 1</a>
+        {% endfor %}
+    </div>
+    <div data-bs-spy="scroll" data-bs-target="#menu-nav-list" data-bs-offset="0">
+        {% for category in categories %}
+        <div id="{{category}}-grid" class="grid">
 
-    
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}

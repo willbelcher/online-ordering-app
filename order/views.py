@@ -128,7 +128,18 @@ def create_order(request):
 def edit_order(request):
     user = request.user
 
-    return render(request, "order/edit_order.html")
+    orders = Order.objects.filter(user=user, status=OrderStatuses.IN_PROGRESS)
+    if orders.count() != 1: return redirect("store-selection/")
+
+    order = orders.first()
+
+    menu_items = order.store.available_items
+
+    context = {
+        "menu_items": menu_items
+    }
+
+    # return render(request, "order/edit_order.html", context)
 
 
 

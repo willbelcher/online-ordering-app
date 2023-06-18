@@ -12,6 +12,11 @@ class OrderMethods(models.TextChoices):
     PICKUP = "Pickup"
     DELIVERY = "Delivery"
 
+class MenuItemCategories(models.TextChoices):
+    PIZZA = "Pizza"
+    SALAD = "Salad"
+    APPETIZER = "Appetizer"
+
 class BusinessHours(models.Model):
     mon_open = models.TimeField(null=True)
     mon_close = models.TimeField(null=True)
@@ -48,6 +53,7 @@ class Address(models.Model):
 
 class MenuItem(models.Model):
     name = models.CharField(max_length=15, unique=True)
+    category = models.TextField(choices=MenuItemCategories.choices, default=MenuItemCategories.PIZZA)
     price = models.DecimalField(default=0, max_digits=5, decimal_places=2)
     ingredients = models.TextField(max_length=255, blank=True)
     available = models.BooleanField(default=True)
