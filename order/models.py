@@ -12,10 +12,11 @@ class OrderMethods(models.TextChoices):
     PICKUP = "Pickup"
     DELIVERY = "Delivery"
 
+# order of fields here currently determines order displayed
 class MenuItemCategories(models.TextChoices):
-    PIZZA = "Pizza"
-    SALAD = "Salad"
     APPETIZER = "Appetizer"
+    SALAD = "Salad"
+    PIZZA = "Pizza"
 
 class BusinessHours(models.Model):
     mon_open = models.TimeField(null=True)

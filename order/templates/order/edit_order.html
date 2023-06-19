@@ -3,17 +3,21 @@
 {% block content %}
 
 {% include "nav.html" %}
-<div class="container grid pt-3">
+<div class="grid pb-5 ms-5">
     <div class="row">
-        <div id="list-menu-categories" class="list-group col-sm-2">
-            {% for category in items_by_category.keys %}
-            <a class="list-group-item list-group-item-action" href="#{{ category }}-grid">{{ category }}</a>
-            {% endfor %}
+        <div class="col-2">
+            <div id="list-menu-categories" class="list-group position-sticky top-0 pt-5">
+                <div class="pt-3">
+                    {% for category in items_by_category.keys %}
+                    <a class="list-group-item list-group-item-action" href="#{{ category|lower }}">{{ category }}</a>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        <div data-bs-spy="scroll" data-bs-target="#list-menu-categories" class="col-10" data-bs-offset="0" tabindex="0">
+        <div data-bs-spy="scroll" data-bs-target="#list-menu-categories" class="col-10 position-relative scroll-area" data-bs-offset="0" tabindex="0">
             {% for category, menu_items in items_by_category.items %}
-            <div id="{{ category }}-grid" class="grid">
-                <h3>{{ category }}</h3>
+            <h3 id="{{ category|lower }}" class="mt-5">{{ category }}</h3> <!-- TODO: fix borders for change active area -->
+            <div class="grid">
                 <hr>
                 <div class="row row-cols-auto">
                     {% for menu_item in menu_items %}

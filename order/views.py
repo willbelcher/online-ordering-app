@@ -124,7 +124,6 @@ def edit_order(request):
     user = request.user
 
     orders = Order.objects.defer("store", "date_created").filter(user=user, status=OrderStatuses.IN_PROGRESS)
-    print(orders)
     if orders.count() != 1: return redirect("order:store_selection")
 
     order = orders.first()
