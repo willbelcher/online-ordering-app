@@ -12,7 +12,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'css/main.css' %}">
     </head>
-    <body class="mt-5">
+    <!-- if/else makes the body accessible to scrollspy for menu selection, need better solution -->
+    <body class="mt-5" 
+    {% if items_by_category %} data-bs-spy="scroll" data-bs-target="#list-menu-categories" data-bs-offset="0" tabindex="0" 
+    {% else %}{% endif %}>
+
         <div class="mt-5">
             {% block content %}  
             {% endblock content %}
