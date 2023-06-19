@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from order.models import Store, Order, OrderMethod, OrderMethods, OrderStatuses
+from order.models import Store, Order, OrderMethod, OrderMethods, OrderStatuses, MenuItemCategories
 from order.custom_utils import StoreWrapper
 
 # Contains store selection and account options
@@ -43,7 +43,7 @@ def user_login(request):
             return redirect('/')
 
     # print("logged in as: {}".format(request.user))
-    return redirect('/store-selection') 
+    return redirect("order:store_selection") 
 
 def user_create(request):
     logout(request)
@@ -74,14 +74,14 @@ def user_create(request):
             if user.is_active:
                 login(request, user) 
                 # print("logged in as: {}".format(request.user))
-                return redirect('/store-selection')   
+                return redirect("order:store_selection")   
 
-    return redirect('/')
+    return redirect("order:index")
 
 def user_logout(request):
     logout(request)
 
-    return redirect('/')
+    return redirect("order:index")
 
 @login_required
 def store_selection(request):
@@ -104,10 +104,9 @@ def store_selection(request):
 
 @login_required
 def create_order(request):
-    if request.method != "POST": return redirect('store-selection/')
+    if request.method != "POST": return redirect("order:store_selection")
 
-    store_id = request.POST['id']
-    assert type(store_id) == int
+    store_id = int(request.POST['store_id']) # check security on this
     user = request.user
     
     current_orders = Order.objects.filter(user=user, status=OrderStatuses.IN_PROGRESS)
@@ -116,30 +115,31 @@ def create_order(request):
     store = Store.objects.get(id=store_id)
     order_method = store.order_methods.get(method=OrderMethods.PICKUP) #temp TODO: user select order method (in create order and store select)
     
-    new_order = Order.objects.create(user=user, store=store, order_method=order_method)
+    Order.objects.create(user=user, store=store, order_method=order_method)
 
-    print(new_order.__dict__)
-
-    new_order.delete()
-
-    return redirect("edit-order/")
+    return redirect("order:edit_order")
 
 @login_required
 def edit_order(request):
     user = request.user
 
-    orders = Order.objects.filter(user=user, status=OrderStatuses.IN_PROGRESS)
-    if orders.count() != 1: return redirect("store-selection/")
+    orders = Order.objects.defer("store", "date_created").filter(user=user, status=OrderStatuses.IN_PROGRESS)
+    print(orders)
+    if orders.count() != 1: return redirect("order:store_selection")
 
     order = orders.first()
 
     menu_items = order.store.available_items
 
+    items_by_category = {category:[] for category in MenuItemCategories.values}
+    for menu_item in menu_items.all():
+        items_by_category[menu_item.category].append(menu_item)
+
     context = {
-        "menu_items": menu_items
+        "items_by_category": items_by_category
     }
 
-    # return render(request, "order/edit_order.html", context)
+    return render(request, "order/edit_order.html", context)
 
 
 
