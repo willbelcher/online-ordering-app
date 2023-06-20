@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from order.models import Store, Order, OrderMethod, OrderMethods, OrderStatuses, MenuItemCategories
+from order.models import Store, Order, OrderMethod, OrderMethods, OrderStatuses, OrderItem, MenuItem, MenuItemCategories
 from order.custom_utils import StoreWrapper
 
 # Contains store selection and account options
@@ -123,19 +123,28 @@ def create_order(request):
 def edit_order(request):
     user = request.user
 
-    orders = Order.objects.defer("store", "date_created").filter(user=user, status=OrderStatuses.IN_PROGRESS)
+    orders = Order.objects.defer("date_created").filter(user=user, status=OrderStatuses.IN_PROGRESS)
     if orders.count() != 1: return redirect("order:store_selection")
 
     order = orders.first()
 
     menu_items = order.store.available_items
 
+    item_added = False
+    if request.method == "POST":
+        # needs error/security handling
+        mi = menu_items.get(id=request.POST["menu_item_id"])
+        oi = OrderItem.objects.create(order=order, item=mi, quantity=1)
+        item_added = True
+        
+
     items_by_category = {category:[] for category in MenuItemCategories.values}
     for menu_item in menu_items.all():
         items_by_category[menu_item.category].append(menu_item)
 
     context = {
-        "items_by_category": items_by_category
+        "items_by_category": items_by_category,
+        "item_added": item_added,
     }
 
     return render(request, "order/edit_order.html", context)

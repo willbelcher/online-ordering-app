@@ -23,11 +23,35 @@
                     <hr>
                     <div class="row row-cols-auto">
                         {% for menu_item in menu_items %}
-                        <div class="col-3 card">
-                            <img src="{% static 'img/placeholder.jpg' %}" class="card-img-top">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ menu_item.name }}</h5>
-                                <p class="card-text">{{ menu_item.ingredients }}</p>
+                        <div class="col-3">
+                            <button class="card" type="button" data-bs-toggle="modal" data-bs-target="#order-modal-{{ menu_item.id }}">
+                                <img src="{% static 'img/placeholder.jpg' %}" class="card-img-top">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ menu_item.name }}</h5>
+                                    <p class="card-text">{{ menu_item.ingredients }}</p>
+                                    
+                                </div>
+                            </button>
+                        </div>
+                        <div class="modal fade" id="order-modal-{{ menu_item.id }}" tabindex="-1" aria-labelledby="order-modal-{{ menu_item.id }}-label" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="order-modal-{{ menu_item.id }}-label">{{ menu_item.name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ...
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <form name="add-{{ menu_item.id }}-to-order" action="{% url 'order:edit_order' %}" method="post">
+                                            {% csrf_token %}
+                                            <input type="number" name="menu_item_id" value="{{ menu_item.id }}" readonly hidden>
+                                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Order</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
@@ -38,5 +62,25 @@
         </div>
     </div>
 </div>
+
+{% if item_added %}
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11" aria-live="polite" aria-atomic="true">
+    <div id="itemAddedToast" class="toast bg-success text-light align-items-center border-0" role="status" aria-live="polite" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Item added to cart.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let toast = bootstrap.Toast.getOrCreateInstance(itemAddedToast);
+    toast.show(); 
+</script>
+{% else %}
+{% endif %}
 
 {% endblock %}
