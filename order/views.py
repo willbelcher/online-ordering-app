@@ -109,7 +109,8 @@ def create_order(request):
     store_id = int(request.POST['store_id']) # check security on this
     user = request.user
     
-    current_orders = Order.objects.filter(user=user, status=OrderStatuses.IN_PROGRESS)
+    current_orders = user.orders.filter(status=OrderStatuses.IN_PROGRESS)
+    print(current_orders)
     current_orders.delete() # TODO: Change for continue order option, render create_order.html
     
     store = Store.objects.get(id=store_id)
@@ -123,7 +124,7 @@ def create_order(request):
 def edit_order(request):
     user = request.user
 
-    orders = Order.objects.defer("date_created").filter(user=user, status=OrderStatuses.IN_PROGRESS)
+    orders = user.orders.defer("date_created").filter(status=OrderStatuses.IN_PROGRESS)
     if orders.count() != 1: return redirect("order:store_selection")
 
     order = orders.first()
@@ -136,11 +137,12 @@ def edit_order(request):
         mi = menu_items.get(id=request.POST["menu_item_id"])
         oi = OrderItem.objects.create(order=order, item=mi, quantity=1)
         item_added = True
-        
 
+    # consider reworking
     items_by_category = {category:[] for category in MenuItemCategories.values}
     for menu_item in menu_items.all():
         items_by_category[menu_item.category].append(menu_item)
+    #
 
     context = {
         "items_by_category": items_by_category,

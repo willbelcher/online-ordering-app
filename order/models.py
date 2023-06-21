@@ -66,18 +66,18 @@ class Store(models.Model):
     timezone = models.CharField(default="UTC", max_length=30)
     schedule = models.OneToOneField(BusinessHours, on_delete=models.CASCADE)
     out_of_schedule_close = models.BooleanField(default=False)
-    available_items = models.ManyToManyField(MenuItem)
+    available_items = models.ManyToManyField(MenuItem, related_name="stores_where_available")
     order_methods = models.ManyToManyField(OrderMethod)
 
 class Order(models.Model):
-    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    store = models.ForeignKey(Store, null=False, on_delete=models.DO_NOTHING) # test change
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE, related_name="orders")
+    store = models.ForeignKey(Store, null=False, on_delete=models.DO_NOTHING, related_name="orders") # test change
     order_method = models.ForeignKey(OrderMethod, null=False, on_delete=models.DO_NOTHING) # test change
     status = models.PositiveSmallIntegerField(choices=OrderStatuses.choices, default=OrderStatuses.IN_PROGRESS)
     date_created = models.DateTimeField(auto_now_add=True, editable=False, blank=True)
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_items")
     item = models.ForeignKey(MenuItem, on_delete=models.DO_NOTHING) # Test change to cascade
     quantity = models.PositiveSmallIntegerField(default=1, validators=[MaxValueValidator(15, "Maximum quantity reached")])
     special_instructions = models.TextField(max_length=255, blank=True)
