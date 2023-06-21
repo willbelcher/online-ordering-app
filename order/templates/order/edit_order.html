@@ -3,14 +3,14 @@
 {% block content %}
 
 {% include "nav.html" %}
-<div class="container pb-5">
+<div class="container-fluid pb-5">
     <div class="grid">
         <div class="row">
-            <div class="col-2">
+            <div class="col-auto">
                 <div id="list-menu-categories" class="list-group position-sticky top-0 pt-5">
                     <div class="pt-3">
                         {% for category in items_by_category.keys %}
-                        <a class="list-group-item list-group-item-action" href="#{{ category|lower }}">{{ category }}</a>
+                        <a class="list-group-item list-group-item-action pe-5" href="#{{ category|lower }}">{{ category }}</a>
                         {% endfor %}
                     </div>
                 </div>
