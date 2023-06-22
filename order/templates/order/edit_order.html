@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 {% load static %}
+{% load bootstrap_icons %}
+
 {% block content %}
 
 {% include "nav.html" %}
 <div class="container-fluid pb-5">
     <div class="grid">
         <div class="row">
-            <div class="col-auto">
+            <div class="col-auto d-sm-none d-md-block">
                 <div id="list-menu-categories" class="list-group position-sticky top-0 pt-5">
                     <div class="pt-3">
                         {% for category in items_by_category.keys %}
@@ -29,7 +31,6 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{ menu_item.name }}</h5>
                                     <p class="card-text">{{ menu_item.ingredients }}</p>
-                                    
                                 </div>
                             </button>
                         </div>
@@ -58,6 +59,11 @@
                     </div>
                 </div>
                 {% endfor %}
+            </div>
+            <div class="col-sm-auto">
+                <div class="position-fixed mt-4">
+                    {% bs_icon 'cart' size='1.5rem' %}
+                </div>
             </div>
         </div>
     </div>
