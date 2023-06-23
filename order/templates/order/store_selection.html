@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 {% block content %}
+{% load static %}
+{% load bootstrap_icons %}
 
 {% include "nav.html" %}
 
@@ -12,8 +14,8 @@
                     <div class="card-body">
                         <div class="row pb-3">
                             <div class="col-2">
-                                <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#store-collapse{{ store.id }}" aria-expanded="false" aria-controls="store-collapse{{ store.id }}">
-                                    Temp
+                                <button id="toggle-store-collapse{{ store.id }}" class="btn shadow-none swing-up" type="button" data-bs-toggle="collapse" data-bs-target="#store-collapse{{ store.id }}" aria-expanded="false" aria-controls="store-collapse{{ store.id }}">
+                                    {% bs_icon 'caret-right' size='1.5rem' %}
                                 </button>
                             </div>
                             <h4 class="card-title col-7">{{ store.name }}</h4>
@@ -31,7 +33,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="card collapse" id="store-collapse{{ store.id }}">
+                        <div name="store-collapse" class="card collapse" id="store-collapse{{ store.id }}">
                             <div class="grid">
                                 <div class="row">
                                     <div class="col-5 text-center" style="white-space: pre-line;">
@@ -55,6 +57,24 @@
         </div>
     </div>
 </div>
+
+<script>
+    const cname1 = "swing-up"
+    const cname2 = "swing-down"
+
+    let cards = document.getElementsByName("store-collapse")
+
+    for (let i=0; i < cards.length; i++) {
+        let button = document.getElementById("toggle-".concat(cards[i].id))
+
+        cards[i].addEventListener('hide.bs.collapse', function () {
+            button.className = button.className.replace(cname2, cname1)
+        })
+        cards[i].addEventListener('show.bs.collapse', function () {
+            button.className = button.className.replace(cname1, cname2)
+        })
+    }
+</script>
 
 {% endblock %}
 
