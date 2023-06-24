@@ -1,24 +1,15 @@
-from django.test import TestCase, RequestFactory
-from django.contrib.sessions.middleware import SessionMiddleware
-
+from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user
-from order.models import Store, BusinessHours, Address, OrderMethod, OrderMethods
+from order.models import Store, BusinessHours, Address, Order, OrderMethod, OrderMethods
 from order.views import user_login, user_create
 
 from datetime import time
 
-def setup_request(request):
-    middleware = SessionMiddleware(request)
-    middleware.process_request(request)
-    request.session.save()
-
-    return request
 
 class UserAuthTests(TestCase):
     def setUp(self):
         password = "password"
-        self.factory = RequestFactory()
         self.user1 = User.objects.create_user(username="test1", email="test1@example.com", password=password)
         self.user1.raw_password = password
 
@@ -81,17 +72,17 @@ class UserAuthTests(TestCase):
         self.assertFalse(new_user.is_authenticated)
 
     def test_duplicate_username_by_case_create_account(self):
-            self.assertFalse(get_user(self.client).is_authenticated)
+        self.assertFalse(get_user(self.client).is_authenticated)
 
-            username = "Test1"
-            email = "test1@example.com"
-            password = "password"
+        username = "Test1"
+        email = "test1@example.com"
+        password = "password"
 
-            resp = self.client.post('/create-account/', {'username': username, 'email': email, 'password': password})
-            
-            new_user = get_user(self.client)
-            self.assertEqual(len(resp.client.session["account_create_errors"]), 1)
-            self.assertFalse(new_user.is_authenticated)
+        resp = self.client.post('/create-account/', {'username': username, 'email': email, 'password': password})
+        
+        new_user = get_user(self.client)
+        self.assertEqual(len(resp.client.session["account_create_errors"]), 1)
+        self.assertFalse(new_user.is_authenticated)
 
     def test_duplicate_email_by_case_create_account(self):
         self.assertFalse(get_user(self.client).is_authenticated)
@@ -111,7 +102,6 @@ class StoreSelectionTests(TestCase):
     def setUp(self):
         username = "test1"
         password = "password"
-        self.factory = RequestFactory()
         self.user1 = User.objects.create_user(username=username, email="test1@example.com", password=password)
         self.client.login(username=username, password=password)
 
@@ -143,5 +133,27 @@ class StoreSelectionTests(TestCase):
 
         self.assertFalse(processed_store2['is_open'])
 
+
+# view still subject to changes in behavior
+class OrderCreationTests(TestCase):
+    def setUp(self):
+        username = "test1"
+        password = "password"
+        self.user = User.objects.create_user(username=username, email="test1@example.com", password=password)
+        self.client.login(username=username, password=password)
+
+        self.address1 = Address.objects.create(street="123 test street", city="tempcity", state="NA", zipcode="12345")
+        self.schedule1 = BusinessHours.objects.create(mon_open=time(9, 30), mon_close=time(21, 30))
+        self.store1 = Store.objects.create(name="test store 1", address=self.address1, timezone="US/Mountain", schedule=self.schedule1)
+
+        self.address2 = Address.objects.create(street="123 example ave", city="exampleton", state="PA", zipcode="67891")
+        self.schedule2 = BusinessHours.objects.create()
+        self.store2 = Store.objects.create(name="test store 2", address=self.address2, timezone="US/Mountain", schedule=self.schedule2)
+
+    def test_simple_order_creation(self):
+        resp = self.client.post('/create-order/', {'store_id': self.store1.id})
+
+        self.assertEqual(self.user.orders.count(), 1)
+        self.assertEqual(Order.objects.count(), 1)
 
 

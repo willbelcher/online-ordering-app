@@ -110,11 +110,10 @@ def create_order(request):
     user = request.user
     
     current_orders = user.orders.filter(status=OrderStatuses.IN_PROGRESS)
-    print(current_orders)
     current_orders.delete() # TODO: Change for continue order option, render create_order.html
     
     store = Store.objects.get(id=store_id)
-    order_method = store.order_methods.get(method=OrderMethods.PICKUP) #temp TODO: user select order method (in create order and store select)
+    order_method, _ = store.order_methods.get_or_create(method=OrderMethods.PICKUP) #temp TODO: user select order method (in create order and store select)
     
     Order.objects.create(user=user, store=store, order_method=order_method)
 
